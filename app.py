@@ -55,8 +55,29 @@ def main():
         ) + timedelta(hours=2)
 
         # title_html = f"<h2 style='font-weight: bold; font-size: 150%; display: inline;'>{title}</h2><h4 style='display: inline; font-size: 125%;'> ({speakers})</h4>"
+                # Build the speaker string with avatars if available
+        speaker_elements = []
+        for speaker_detail in talk["speakers_details"]:
+            name = speaker_detail["name"]
+            avatar = speaker_detail.get("avatar")
+            if avatar:
+                speaker_elements.append(f"<img src='{avatar}' alt='{name}' style='width: 30px; height: 30px; border-radius: 15px;' />")
+            else:
+                speaker_elements.append(name)
         
-        title_html = f"<div style='display: flex; align-items: baseline;'><h2 style='font-weight: bold; font-size: 150%; margin-right: 10px;'>{title}</h2><span style='font-size: 125%;'>({speakers})</span></div>"
+        speaker_str = ""
+        for i, element in enumerate(speaker_elements):
+            if i > 0 and isinstance(element, str) and isinstance(speaker_elements[i - 1], str):
+                speaker_str += ", "
+            speaker_str += element
+            if i < len(speaker_elements) - 1 and not (isinstance(element, str) and isinstance(speaker_elements[i + 1], str)):
+                speaker_str += ", "
+        
+        title_html = f"<div style='display: flex; justify-content: space-between; align-items: center;'><h2 style='font-weight: bold; font-size: 150%;'>{title}</h2><span style='font-size: 75%;'>{speaker_str}</span></div>"
+        # st.markdown(title_html, unsafe_allow_html=True)
+
+
+        # title_html = f"<div style='display: flex; align-items: baseline;'><h2 style='font-weight: bold; font-size: 150%; margin-right: 10px;'>{title}</h2><span style='font-size: 125%;'>({speakers})</span></div>"
 
         if current_time >= start_time and current_time <= end_time:
             if not in_progress_displayed:
@@ -84,7 +105,8 @@ def main():
                 with st.expander(f"{abstract_preview}..."):
                     st.write(f"{abstract_rest}")
             else:
-                st.write(f"**Abstract:** {abstract}")
+                with st.expander(label="", expanded=True):
+                    st.write(f"{abstract}")
 
         track = talk.get("track")
         room = talk["room"]
@@ -95,6 +117,8 @@ def main():
 
         if track:
             st.markdown(f"<div style='display: flex; justify-content: space-between;'><div <span style='color: white;'>{talk['track']}</span></div><div>{talk['room']}</div></div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div style='display: flex; justify-content: space-between;'><div <span style='color: white;'>{talk['room']}</span></div></div>", unsafe_allow_html=True)
 
         st.write("---")
 
