@@ -28,31 +28,17 @@ def main():
     # Display matching talks
     for idx, talk in enumerate(matching_talks):
         st.subheader(f"{talk['title']}")
-        st.write(f"**Abstract:** {talk['abstract']}")
+        if 'abstract' in talk:
+            st.write(f"**Abstract:** {talk['abstract']}")
         
-        if talk['speakers']:
+        if 'speakers' in talk:
             st.write(f"**Speakers:** {', '.join(talk['speakers'])}")
-        
-        st.write(f"**Track:** {talk['track']}")
+        if 'track' in talk:
+            st.write(f"**Track:** {talk['track']}")
+            
         st.write(f"**Room:** {talk['room']}")
-        
-        # Adjusted time format with UTC+2 offset
-        start_time = datetime.strptime(talk['start'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
-        end_time = datetime.strptime(talk['end'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
-
-        # Replace day of the week with its literal name
-        day_name = start_time.strftime('%A')
-        formatted_start_time = start_time.strftime(f'{day_name} %I:%M %p')
-        formatted_end_time = end_time.strftime(f'{day_name} %I:%M %p')
-
-        # Calculate the duration
-        duration = end_time - start_time
-        duration_hours = duration.seconds // 3600
-        duration_minutes = (duration.seconds % 3600) // 60
-        
-        st.write(f"**Start Time:** {formatted_start_time}")
-        st.write(f"**End Time:** {formatted_end_time}")
-        st.write(f"**Duration:** {duration_hours} hours {duration_minutes} minutes")
+        st.write(f"**Start Time:** {talk['start']}")
+        st.write(f"**Duration:** {talk['duration']}")
         
         st.write("---")
 
