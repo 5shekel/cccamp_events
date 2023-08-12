@@ -1,20 +1,27 @@
 import json
+import pytz
 import argparse
 from datetime import datetime, timedelta
 
-def get_talk_details_by_text(data, text):
+def get_talk_details_by_text(data, text=None):
     matching_talks = []
     for talk in data['talks']:
-        title_text = talk['title']['en'] if isinstance(talk['title'], dict) else talk['title']
+        title_obj = talk['title']
+        if isinstance(title_obj, dict):
+            title_text = title_obj.get('en', title_obj.get('de', ''))
+        else:
+            title_text = title_obj        
+        
         abstract_text = talk.get('abstract', '')
         speaker_codes = talk.get('speakers', [])
+        speaker_names = [speaker['name'] for speaker in data['speakers'] if speaker['code'] in speaker_codes]
+        talk['speakers'] = speaker_names
 
-        if (text.lower() in title_text.lower() or
-            text.lower() in abstract_text.lower() or
-            any(text.lower() in speaker['name'].lower() for speaker in data['speakers'] if speaker['code'] in speaker_codes)):
+        if text and (text.lower() in title_text.lower() or
+                     text.lower() in abstract_text.lower() or
+                     any(text.lower() in speaker_name.lower() for speaker_name in speaker_names)) or not text:
 
-            speaker_names = [speaker['name'] for speaker in data['speakers'] if speaker['code'] in speaker_codes]
-            talk['speakers'] = speaker_names
+            talk['title'] = title_text  # Set the title to the extracted text
 
             track_id = talk.get('track', None)
             if track_id:
@@ -51,8 +58,15 @@ def get_talk_details_by_text(data, text):
             talk['duration'] = ' '.join(duration_parts) if duration_parts else '0 minutes'
 
             matching_talks.append(talk)
-            
-    return matching_talks
+
+    # If the user entered a search query, return all matching talks
+    if text:
+        return matching_talks
+
+    # If the user just entered the app, return the next 10 upcoming talks
+    current_time = datetime.now(pytz.utc) + timedelta(hours=2)  # Convert to UTC+2 timezone
+    upcoming_talks = [talk for talk in matching_talks if datetime.strptime(talk['unmodified_start'], '%Y-%m-%dT%H:%M:%S%z') > current_time]
+    return upcoming_talks[:10]
 
 def main():
     parser = argparse.ArgumentParser(description='Extract talk details from JSON data.')
