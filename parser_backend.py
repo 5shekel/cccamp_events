@@ -5,12 +5,16 @@ from datetime import datetime, timedelta
 
 def get_talk_details_by_text(data, text=None):
     matching_talks = []
+    in_progress_talks = []
+    upcoming_talks = []
+    current_time = datetime.now(pytz.utc) + timedelta(hours=2)  # Convert to UTC+2 timezone
+
     for talk in data['talks']:
         title_obj = talk['title']
         if isinstance(title_obj, dict):
             title_text = title_obj.get('en', title_obj.get('de', ''))
         else:
-            title_text = title_obj        
+            title_text = title_obj
         
         abstract_text = talk.get('abstract', '')
         speaker_codes = talk.get('speakers', [])
@@ -33,20 +37,16 @@ def get_talk_details_by_text(data, text=None):
             room_name = room_name_obj.get('en', room_name_obj.get('de', '')) if room_name_obj else ''
             talk['room'] = room_name
 
-            # Convert start and end times to human-readable format with UTC+2 offset
             start_time = datetime.strptime(talk['start'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
             end_time = datetime.strptime(talk['end'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
 
-            # Add unmodified start and end times to the talk
             talk['unmodified_start'] = talk['start']
             talk['unmodified_end'] = talk['end']
 
-            # Replace day of the week with its literal name
             day_name = start_time.strftime('%A')
             talk['start'] = start_time.strftime(f'{day_name} %I:%M %p ')
             talk['end'] = end_time.strftime(f' {day_name} %I:%M %p ')
 
-            # Calculate the duration
             duration = end_time - start_time
             duration_parts = []
             duration_hours = duration.seconds // 3600
@@ -57,16 +57,18 @@ def get_talk_details_by_text(data, text=None):
                 duration_parts.append(f'{duration_minutes} minutes')
             talk['duration'] = ' '.join(duration_parts) if duration_parts else '0 minutes'
 
-            matching_talks.append(talk)
+            if current_time >= start_time and current_time <= end_time:
+                in_progress_talks.append(talk)
+            elif current_time < start_time:
+                upcoming_talks.append(talk)
 
-    # If the user entered a search query, return all matching talks
     if text:
-        return matching_talks
+        matching_talks = in_progress_talks + upcoming_talks[:10]
+    else:
+        matching_talks = in_progress_talks + upcoming_talks
 
-    # If the user just entered the app, return the next 10 upcoming talks
-    current_time = datetime.now(pytz.utc) + timedelta(hours=2)  # Convert to UTC+2 timezone
-    upcoming_talks = [talk for talk in matching_talks if datetime.strptime(talk['unmodified_start'], '%Y-%m-%dT%H:%M:%S%z') > current_time]
-    return upcoming_talks[:10]
+    return matching_talks
+
 
 def main():
     parser = argparse.ArgumentParser(description='Extract talk details from JSON data.')
