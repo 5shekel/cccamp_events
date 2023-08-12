@@ -3,11 +3,10 @@ import pytz
 import argparse
 from datetime import datetime, timedelta
 
-def get_talk_details_by_text(data, text=None):
+def get_talk_details_by_text(data, text=None, current_time=None):
     matching_talks = []
     in_progress_talks = []
     upcoming_talks = []
-    current_time = datetime.now(pytz.utc) + timedelta(hours=2)  # Convert to UTC+2 timezone
 
     for talk in data['talks']:
         title_obj = talk['title']
@@ -21,17 +20,19 @@ def get_talk_details_by_text(data, text=None):
         speaker_names = [speaker['name'] for speaker in data['speakers'] if speaker['code'] in speaker_codes]
         talk['speakers'] = speaker_names
 
+        track_id = talk.get('track', None)
+        if track_id:
+            track_name_obj = next((track['name'] for track in data['tracks'] if track['id'] == track_id), None)
+            track_name = track_name_obj.get('en', track_name_obj.get('de', '')) if track_name_obj else ''
+            talk['track'] = track_name
+
         if text and (text.lower() in title_text.lower() or
-                     text.lower() in abstract_text.lower() or
-                     any(text.lower() in speaker_name.lower() for speaker_name in speaker_names)) or not text:
+                    text.lower() in abstract_text.lower() or
+                    any(text.lower() in speaker_name.lower() for speaker_name in speaker_names) or
+                    (text.lower() in track_name.lower())) or not text:
 
             talk['title'] = title_text  # Set the title to the extracted text
 
-            track_id = talk.get('track', None)
-            if track_id:
-                track_name_obj = next((track['name'] for track in data['tracks'] if track['id'] == track_id), None)
-                track_name = track_name_obj.get('en', track_name_obj.get('de', '')) if track_name_obj else ''
-                talk['track'] = track_name
 
             room_name_obj = next((room['name'] for room in data['rooms'] if room['id'] == talk['room']), None)
             room_name = room_name_obj.get('en', room_name_obj.get('de', '')) if room_name_obj else ''
@@ -39,6 +40,10 @@ def get_talk_details_by_text(data, text=None):
 
             start_time = datetime.strptime(talk['start'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
             end_time = datetime.strptime(talk['end'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
+
+            # Skip past talks
+            if end_time < current_time:
+                continue
 
             talk['unmodified_start'] = talk['start']
             talk['unmodified_end'] = talk['end']
@@ -84,7 +89,7 @@ def main():
     if not text:
         text = input("Please enter the text to search in title, abstract, or speakers: ")
 
-    matching_talks = get_talk_details_by_text(data, text=text)
+    matching_talks = get_talk_details_by_text(data, text=text, current_time=datetime.now(pytz.utc) + timedelta(hours=2))
     print(json.dumps(matching_talks, indent=4))
 
 if __name__ == '__main__':
