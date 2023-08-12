@@ -57,7 +57,7 @@ def get_talk_details_by_text(data, text=None, current_time=None):
             duration_hours = duration.seconds // 3600
             duration_minutes = (duration.seconds % 3600) // 60
             if duration_hours > 0:
-                duration_parts.append(f'{duration_hours} hours')
+                duration_parts.append(f'{duration_hours} hour')
             if duration_minutes > 0:
                 duration_parts.append(f'{duration_minutes} minutes')
             talk['duration'] = ' '.join(duration_parts) if duration_parts else '0 minutes'

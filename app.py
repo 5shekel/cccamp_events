@@ -36,6 +36,11 @@ def main():
 
     for idx, talk in enumerate(matching_talks):
         title = talk["title"]
+        
+        if talk["speakers"]:
+            # st.write(f"**Speakers:** {', '.join(talk['speakers'])}")
+            speakers = ", ".join(talk["speakers"]) if talk["speakers"] else "N/A"
+
         room = talk["room"]
 
         # Skip talks with "Lunch" in the title that are not in room 5834
@@ -49,47 +54,47 @@ def main():
             talk["unmodified_end"], "%Y-%m-%dT%H:%M:%S%z"
         ) + timedelta(hours=2)
 
+        # title_html = f"<h2 style='font-weight: bold; font-size: 150%; display: inline;'>{title}</h2><h4 style='display: inline; font-size: 125%;'> ({speakers})</h4>"
+        
+        title_html = f"<div style='display: flex; align-items: baseline;'><h2 style='font-weight: bold; font-size: 150%; margin-right: 10px;'>{title}</h2><span style='font-size: 125%;'>({speakers})</span></div>"
+
         if current_time >= start_time and current_time <= end_time:
             if not in_progress_displayed:
-                st.markdown(
-                    "<h1 style='font-size: 200%; color: limegreen;'>in Progress</h1>",
-                    unsafe_allow_html=True,
-                )
+                st.markdown("<h1 style='font-size: 200%; color: limegreen;'>in Progress</h1>", unsafe_allow_html=True)
                 in_progress_displayed = True
-            st.markdown(
-                f"<h2 style='font-weight: bold; font-size: 150%;'>{title}</h2>",
-                unsafe_allow_html=True,
-            )
+            st.markdown(title_html, unsafe_allow_html=True)
         else:
             if not upcoming_displayed:
-                st.markdown(
-                    "<h1 style='font-size: 200%; color: limegreen;'>Upcoming</h1>",
-                    unsafe_allow_html=True,
-                )
+                st.markdown("<h1 style='font-size: 200%; color: limegreen;'>Upcoming</h1>", unsafe_allow_html=True)
                 upcoming_displayed = True
-            st.markdown(
-                f"<h2 style='font-weight: bold; font-size: 150%;'>{title}</h2>",
-                unsafe_allow_html=True,
-            )
+            st.markdown(title_html, unsafe_allow_html=True)
+
+
+
+        st.markdown(f"<div style='display: flex; justify-content: space-between;'><span style='color: white;'>{talk['start']},  {talk['duration']}</span></div>", unsafe_allow_html=True)
+
 
         abstract = talk.get("abstract")
         if abstract:
-            st.write(f"{abstract}")
-
-        if talk["speakers"]:
-            st.write(f"**Speakers:** {', '.join(talk['speakers'])}")
+            words = abstract.split()
+            split_num = 40
+            abstract_preview = " ".join(words[:split_num])
+            abstract_rest = " ".join(words[split_num:])
+            if len(words) > split_num:
+                with st.expander(f"{abstract_preview}..."):
+                    st.write(f"{abstract_rest}")
+            else:
+                st.write(f"**Abstract:** {abstract}")
 
         track = talk.get("track")
         room = talk["room"]
 
-        if track:
-            st.write(f"**Track** {talk['track']}")
-        
         # Only display the room if it's not the same as the track
         if room != track:
-            st.write(f"**Room:** {room}")
+            talk['room'] = ''
 
-        st.markdown(f"<div style='display: flex; justify-content: space-between;'><div <span style='color: white;'>{talk['start']}</span></div><div>{talk['duration']}</div></div>", unsafe_allow_html=True)
+        if track:
+            st.markdown(f"<div style='display: flex; justify-content: space-between;'><div <span style='color: white;'>{talk['track']}</span></div><div>{talk['room']}</div></div>", unsafe_allow_html=True)
 
         st.write("---")
 
