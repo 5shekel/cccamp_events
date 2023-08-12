@@ -16,10 +16,27 @@ def get_talk_details_by_text(data, text=None, current_time=None):
             title_text = title_obj
         
         abstract_text = talk.get('abstract', '')
+        
+        # Extract speaker details
         speaker_codes = talk.get('speakers', [])
-        speaker_names = [speaker['name'] for speaker in data['speakers'] if speaker['code'] in speaker_codes]
-        talk['speakers'] = speaker_names
+        speaker_details = []
+        for speaker_code in speaker_codes:
+            speaker_info = next((speaker for speaker in data['speakers'] if speaker['code'] == speaker_code), None)
+            if speaker_info:
+                name = speaker_info['name']
+                avatar = speaker_info.get('avatar', None)  # Default to None if avatar is missing
+                speaker_detail = {"name": name}
+                if avatar:  # Add avatar only if it exists
+                    speaker_detail['avatar'] = avatar
+                speaker_details.append(speaker_detail)
 
+
+
+        talk['speakers'] = [detail['name'] for detail in speaker_details]
+        speaker_names = talk['speakers']  # Update this line
+        talk['speakers_details'] = speaker_details
+
+      
         track_id = talk.get('track', None)
         if track_id:
             track_name_obj = next((track['name'] for track in data['tracks'] if track['id'] == track_id), None)
@@ -27,9 +44,10 @@ def get_talk_details_by_text(data, text=None, current_time=None):
             talk['track'] = track_name
 
         if text and (text.lower() in title_text.lower() or
-                    text.lower() in abstract_text.lower() or
-                    any(text.lower() in speaker_name.lower() for speaker_name in speaker_names) or
-                    (text.lower() in track_name.lower())) or not text:
+                            text.lower() in abstract_text.lower() or
+                            any(text.lower() in speaker_name.lower() for speaker_name in speaker_names) or
+                            (text.lower() in track_name.lower())) or not text:
+   
 
             talk['title'] = title_text  # Set the title to the extracted text
 
