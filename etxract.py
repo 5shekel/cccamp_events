@@ -1,5 +1,6 @@
 import json
 import argparse
+from datetime import datetime, timedelta
 
 def get_talk_details_by_text(data, text):
     matching_talks = []
@@ -18,6 +19,16 @@ def get_talk_details_by_text(data, text):
             talk['track'] = track_name
             talk['speakers'] = speaker_names
             talk['room'] = room_name
+
+            # Convert start and end times to human-readable format with UTC+2 offset
+            start_time = datetime.strptime(talk['start'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
+            end_time = datetime.strptime(talk['end'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
+
+            # Replace day of the week with its literal name
+            day_name = start_time.strftime('%A')
+            talk['start'] = start_time.strftime(f'{day_name} %I:%M %p ')
+            talk['end'] = end_time.strftime(f' {day_name} %I:%M %p ')
+
             matching_talks.append(talk)
             
     return matching_talks
