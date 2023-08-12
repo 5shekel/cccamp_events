@@ -36,6 +36,19 @@ def get_talk_details_by_text(data, text):
             talk['start'] = start_time.strftime(f'{day_name} %I:%M %p ')
             talk['end'] = end_time.strftime(f' {day_name} %I:%M %p ')
 
+            # Convert unmodified start and end times with UTC+2 offset
+            unmodified_start_time = datetime.strptime(talk['unmodified_start'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
+            unmodified_end_time = datetime.strptime(talk['unmodified_end'], '%Y-%m-%dT%H:%M:%S%z') + timedelta(hours=2)
+
+            # Calculate the duration
+            duration = unmodified_end_time - unmodified_start_time
+            duration_hours = duration.seconds // 3600
+            duration_minutes = (duration.seconds % 3600) // 60
+
+            # Add the duration to the talk
+            talk['duration'] = f'{duration_hours} hours {duration_minutes} minutes'
+
+
             matching_talks.append(talk)
             
     return matching_talks
