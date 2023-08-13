@@ -4,7 +4,7 @@ a quick chat with gpt code interperter regarding the camp [schedule.json](https:
 ===
 ### User
 
-cccSced.josn.json
+[uploaded cccSced.json]  
 this is the sceduale for an event. write python script to extract a single event.  
 like
 ```json
