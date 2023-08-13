@@ -144,7 +144,7 @@ Please let me know if there's anything else you'd like to know or do!
 ### User
 
 
-we will not store this code in a python script called backend.py. and query it using a python script called app.py. 
+we will now store this code in a python script called backend.py. and query it using a python script called app.py. 
 the app will use streamlit to show all events and a search box that allows user to filter for specific events
 
 ---
