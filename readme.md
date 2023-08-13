@@ -9,37 +9,37 @@ this is the sceduale for an event. write python script to extract a single event
 like
 ```json
 {
-                                "id": 57602,
-                                "guid": "14df1dd2-afb3-59c0-abe4-abd650f2a7d4",
-                                "logo": "/media/camp2023/submissions/7M8FZ7/irq7_live_in_nuremberg_photo_by_Andreas_Schnappauf_lCEyhj1.jpg",
-                                "date": "2023-08-15T19:00:00+02:00",
-                                "start": "19:00",
-                                "duration": "01:00",
-                                "room": "Marktplatz",
-                                "slug": "camp2023-57602-irq7",
-                                "url": "https://pretalx.c3voc.de/camp2023/talk/7M8FZ7/",
-                                "title": "irq7",
-                                "subtitle": "",
-                                "track": "Live Music",
-                                "type": "Performance",
-                                "language": "de",
-                                "abstract": "Chiptunes! irq7 performt 8Bit Musik am Gameboy. Tanzbar und irgendwo zwischen Electro, Drum & Bass, und Breakbeats.",
-                                "description": "Wer einmal den Bass eines Gameboy-Klassik geh\u00f6rt hat der wei\u00df, dass er es locker mit modernen Synthesizern aufnehmen kann. Den Reiz an diesen alten Ger\u00e4ten liegt aber nicht nur im Sound, sondern auch in der Beschr\u00e4nkung, die man sich damit selbst auferlegt. Diese macht kreativ und reduziert die Musik auf das wesentliche: Melodie, Bass und Schlagzeug. *dading*\r\n\r\nWer Bock hat Chiptunes selber zu schreiben, kann am Gameboymusik-Workshop der auch im Programm zu finden ist teilnehmen!",
-                                "recording_license": "",
-                                "do_not_record": false,
-                                "persons": [
-                                    {
-                                        "id": 4528,
-                                        "code": "RZN9SM",
-                                        "public_name": "irq7",
-                                        "biography": "irq7 ist seit mehreren Jahren in der Chiptune Szene als Gameboy-Liveact aktiv.\r\nDer erste Kontakt zu dieser Art von Musik kam 2003 durch ein Konzert des Gameboymusicclub's in\r\nGraz zustande. Daraufhin folgt der Kauf den ersten Gameboys und dann schlie\u00dflich das erste\r\nKonzert im Jahr 2006. Davor ein \u00fcberzeugter Fan des Commodore 64 Sounds und sammeln erster\r\nErfahrungen mit Tracker-Software am Amiga\r\nUm noch mehr aus den alten Handhelds raus zu holen, beginnt irq7 seine Gameboys selbst zu\r\nmodifizieren und zu erweitern . Alle Aktivit\u00e4ten werden seither auf seinem Blog\r\nhttp://irq7.blogspot.com ver\u00f6ffentlicht. Des Weiteren ist er seit 2010 Mitorganisator des j\u00e4hrliche n\r\nChiptune Festival s CHIP HITS THE FAN http://chiphitsthefan.de in N\u00fcrnberg.",
-                                        "answers": []
-                                    }
-                                ],
-                                "links": [],
-                                "attachments": [],
-                                "answers": []
-                            },
+        "id": 57602,
+        "guid": "14df1dd2-afb3-59c0-abe4-abd650f2a7d4",
+        "logo": "/media/camp2023/submissions/7M8FZ7/irq7_live_in_nuremberg_photo_by_Andreas_Schnappauf_lCEyhj1.jpg",
+        "date": "2023-08-15T19:00:00+02:00",
+        "start": "19:00",
+        "duration": "01:00",
+        "room": "Marktplatz",
+        "slug": "camp2023-57602-irq7",
+        "url": "https://pretalx.c3voc.de/camp2023/talk/7M8FZ7/",
+        "title": "irq7",
+        "subtitle": "",
+        "track": "Live Music",
+        "type": "Performance",
+        "language": "de",
+        "abstract": "Chiptunes! irq7 performt 8Bit Musik am Gameboy. Tanzbar und irgendwo zwischen Electro, Drum & Bass, und Breakbeats.",
+        "description": "Wer einmal den Bass eines Gameboy-Klassik geh\u00f6rt hat der wei\u00df, dass er es locker mit modernen Synthesizern aufnehmen kann. Den Reiz an diesen alten Ger\u00e4ten liegnicht nur im Sound, sondern auch in der Beschr\u00e4nkung, die man sich damit selbst auferlegt. Diese macht kreativ und reduziert die Musik auf das wesentliche: Melodie, Bass und Schla*dading*\r\n\r\nWer Bock hat Chiptunes selber zu schreiben, kann am Gameboymusik-Workshop der auch im Programm zu finden ist teilnehmen!",
+        "recording_license": "",
+        "do_not_record": false,
+        "persons": [
+            {
+                "id": 4528,
+                "code": "RZN9SM",
+                "public_name": "irq7",
+                "biography": "irq7 ist seit mehreren Jahren in der Chiptune Szene als Gameboy-Liveact aktiv.\r\nDer erste Kontakt zu dieser Art von Musik kam 2003 durch ein Konzert des Gameboymusicclub's in\r\nGraz zustande. Daraufhin folgt der Kauf den ersten Gameboys und dann schlie\u00dflich das erste\r\nKonzert im Jahr 2006. Davor ein \u00fcberzeugter Fan des Commodore 64 Sounds und sammeln erster\r\nErfahrungen mit Tracker-Software am Amiga\r\nUm noch mehr aus den alten Handhelds raus zu holen, beginnt irq7 seine Gameboys selbst zu\r\nmodifizieren und zu erweitern . Alle Aktivit\u00e4ten werden seither auf seinem Blog\r\nhttp://irq7.blogspot.com ver\u00f6ffentlicht. Des Weiteren ist er seit 2010 Mitorganisator des j\u00e4hrliche n\r\nChiptune Festival s CHIP HITS THE FAN http://chiphitsthefan.de in N\u00fcrnberg.",
+                "answers": []
+            }
+        ],
+        "links": [],
+        "attachments": [],
+        "answers": []
+}
 ```
 ---
 
@@ -103,41 +103,17 @@ id 57027
 
 Let's run the code to extract the event with the ID 57027 from the file you provided. First, I'll read the file to understand its structure, and then I'll write the appropriate code to extract the event.
 
----
-
-### ChatGPT
-
 It seems that the content of the file is not a list, but a dictionary or another non\-sliceable type. Let's print the keys of this dictionary to better understand its structure.
-
----
-
-### ChatGPT
 
 The JSON file contains a single key, "schedule," which likely contains the event information. Let's inspect the contents of this key to see how the events are organized.
 
----
-
-### ChatGPT
-
 It looks like the `conference` key might contain the event details. Let's continue exploring the structure by examining the contents of the `conference` key.
 
----
-
-### ChatGPT
-
 The `days` key seems to be the most likely place where the individual events are stored, as it typically represents the schedule broken down by day. Let's explore the contents of the `days` key to confirm this.
-
----
-
-### ChatGPT
 
 It seems the output was too long to be displayed entirely, but we can see that the `days` key contains a list of dictionaries, each representing a day with its events.
 
 I'll now write and run the code to extract the event with ID 57027 from the provided JSON file.
-
----
-
-### ChatGPT
 
 The event with ID 57027 has been successfully extracted from the file. Here are the details:
 
