@@ -2,6 +2,29 @@ import streamlit as st
 from datetime import datetime, timedelta
 import backend
 
+
+# Custom CSS to apply the color palette
+st.markdown("""
+    <style>
+        h1 {
+            color: #e558c3;
+        }
+        h2 {
+            color: #ae49aa;
+        }
+        a {
+            color: #846ad3;
+        }
+        .room {
+            color: #3841a4;
+        }
+        hr {
+            border-color: #431b68;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # Title
 st.title("CCC camp")
 
@@ -41,8 +64,9 @@ def display_event(event):
     st.markdown(f"**{event['title']}**")  # Bold title
     st.write(f"{start_datetime.strftime('%A')} {start_datetime.strftime('%I%p').lstrip('0')}, {event['duration']} hours")
     st.markdown(f"{event['abstract']} [Link]({event['url']})")  # URL as a hyperlink
-    st.write(event['room'])
-    st.write("---")  # Horizontal line
+    st.markdown(f"<div class='room'>{event['room']}</div>", unsafe_allow_html=True)  # Room with custom color
+    st.markdown("<hr />", unsafe_allow_html=True)  # Horizontal line with custom color
+    # st.write("---")  # Horizontal line
 
 # If a search query is entered, display only the search results
 if search_query:
