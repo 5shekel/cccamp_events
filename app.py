@@ -15,7 +15,7 @@ def main():
     current_time = datetime.now(pytz.utc) + timedelta(hours=2)
 
     # //fake current timed
-    current_time = datetime.strptime("2023-08-15T18:00:00+02:00", "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=2)
+    # current_time = datetime.strptime("2023-08-15T18:00:00+02:00", "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=2)
 
     st.title("Camp Talks")
     #subheader with current time
@@ -54,8 +54,7 @@ def main():
             talk["unmodified_end"], "%Y-%m-%dT%H:%M:%S%z"
         ) + timedelta(hours=2)
 
-        # title_html = f"<h2 style='font-weight: bold; font-size: 150%; display: inline;'>{title}</h2><h4 style='display: inline; font-size: 125%;'> ({speakers})</h4>"
-                # Build the speaker string with avatars if available
+        # Build the speaker string with avatars if available
         speaker_elements = []
         for speaker_detail in talk["speakers_details"]:
             name = speaker_detail["name"]
@@ -74,10 +73,7 @@ def main():
                 speaker_str += ", "
         
         title_html = f"<div style='display: flex; justify-content: space-between; align-items: center;'><h2 style='font-weight: bold; font-size: 150%;'>{title}</h2><span style='font-size: 75%;'>{speaker_str}</span></div>"
-        # st.markdown(title_html, unsafe_allow_html=True)
 
-
-        # title_html = f"<div style='display: flex; align-items: baseline;'><h2 style='font-weight: bold; font-size: 150%; margin-right: 10px;'>{title}</h2><span style='font-size: 125%;'>({speakers})</span></div>"
 
         if current_time >= start_time and current_time <= end_time:
             if not in_progress_displayed:
