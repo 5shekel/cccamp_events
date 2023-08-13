@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
-import parser_backend as backend
+import backend
 
 # Title
 st.title("CCC camp")
@@ -36,30 +36,33 @@ for event in events:
     if event['end_date'] > datetime.now().isoformat():
         filtered_events.append(event)
 
-# Subheader with current time
-st.subheader(f"Current Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-
 # Function to display an event
 def display_event(event):
-    st.write(event['title'])
+    st.markdown(f"**{event['title']}**")  # Bold title
     st.write(f"{start_datetime.strftime('%A')} {start_datetime.strftime('%I%p').lstrip('0')}, {event['duration']} hours")
-    st.write("URL:", event['url'])
+    st.markdown(f"{event['abstract']} [Link]({event['url']})")  # URL as a hyperlink
+    st.write(event['room'])
     st.write("---")  # Horizontal line
 
-# Subheader for in-progress events
-st.subheader("In-Progress Events:")
-for event in in_progress_events(filtered_events):
-    display_event(event)
+# If a search query is entered, display only the search results
+if search_query:
+    # Filter the events based on the search query
+    search_results = backend.search_events(search_query, filtered_events)
+    
+    # Display the filtered events
+    st.subheader("Search Results:")
+    for event in search_results:
+        display_event(event)
+else:
+    # Subheader with current time
+    st.subheader(f"Current Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-# Subheader for upcoming events
-st.subheader("Upcoming Events:")
-for event in upcoming_events(filtered_events):
-    display_event(event)
+    # Subheader for in-progress events
+    st.subheader("In-Progress Events:")
+    for event in in_progress_events(filtered_events):
+        display_event(event)
 
-# Filter the events based on the search query
-search_results = backend.search_events(search_query, filtered_events)
-
-# Display the filtered events
-st.subheader("Search Results:")
-for event in search_results:
-    display_event(event)
+    # Subheader for upcoming events
+    st.subheader("Upcoming Events:")
+    for event in upcoming_events(filtered_events):
+        display_event(event)
