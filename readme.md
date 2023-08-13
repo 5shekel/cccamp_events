@@ -1,6 +1,13 @@
-a quick chat with gpt code interperter regarding the camp [schedule.json](https://pretalx.c3voc.de/camp2023/schedule/export/schedule.json)
 
-json from the [offical camp calender](https://pretalx.c3voc.de/camp2023/schedule/)
+
+a quick chat with gpt code interperter regarding the camp [schedule.json](https://pretalx.c3voc.de/camp2023/schedule/export/schedule.json), from the [offical camp calender](https://pretalx.c3voc.de/camp2023/schedule/)
+
+hosted on my pc https://y08m5xc3wnre.share.zrok.io/ 
+
+using:
+  *  [openziti](https://openziti.io/) - (the amazing) open zero trust netwroking api
+  *  streamlit - magic frontend
+  *  chatgpt - basicly did everything
 
 ===
 ### User
