@@ -1,123 +1,66 @@
+
 import streamlit as st
 from datetime import datetime, timedelta
-import pytz
-from parser_backend import get_talk_details_by_text
-import json
+import backend
 
-neon_color = "#FF1493"
+# Function to filter out past events
+def filter_past_events(events):
+    current_time = datetime.now().isoformat()
+    return [event for event in events if event['end_date'] > current_time]
 
-@st.cache_data
-def load_data(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+# Function to filter in-progress events
+def in_progress_events(events):
+    current_time = datetime.now().isoformat()
+    return [event for event in events if event['date'] <= current_time < event['end_date']]
 
-def main():
-    current_time = datetime.now(pytz.utc) + timedelta(hours=2)
+# Function to filter upcoming events
+def upcoming_events(events):
+    current_time = datetime.now().isoformat()
+    return [event for event in events if event['date'] > current_time]
 
-    # //fake current timed
-    # current_time = datetime.strptime("2023-08-15T18:00:00+02:00", "%Y-%m-%dT%H:%M:%S%z") + timedelta(hours=2)
+# Load all events
+events = backend.load_events()
 
-    st.title("Camp Talks")
-    #subheader with current time
-    st.markdown(f"<h2 style='font-weight: bold; font-size: 150%;'>Current Time: {current_time.strftime('%A %m %d %I:%M %p')}</h2>", unsafe_allow_html=True)
+# Calculate end_date for each event and filter past events
+filtered_events = []
+for event in events:
+    start_datetime = datetime.fromisoformat(event['date'])
+    duration_hours, duration_minutes = map(int, event['duration'].split(':'))
+    end_datetime = start_datetime + timedelta(hours=duration_hours, minutes=duration_minutes)
+    event['end_date'] = end_datetime.isoformat()
+    if event['end_date'] > datetime.now().isoformat():
+        filtered_events.append(event)
 
-    # Load data from JSON file
-    data = load_data("cccamp.json")
+# Title
+st.title("CCC camp")
 
-    # User input for text search
-    text_to_search = st.text_input("Search for talks by title, abstract, track or speakers:")
+# Subheader with current time
+st.subheader(f"Current Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    # Get matching talks
-    matching_talks = get_talk_details_by_text(data, text_to_search, current_time)
+# Subheader for in-progress events
+st.subheader("In-Progress Events:")
+for event in in_progress_events(filtered_events):
+    st.write(event['title'])
+    st.write("URL:", event['url'])
 
+# Subheader for upcoming events
+st.subheader("Upcoming Events:")
+for event in upcoming_events(filtered_events):
+    st.write(event['title'])
+    st.write("URL:", event['url'])
 
-    in_progress_displayed = False
-    upcoming_displayed = False
+# Display a search box
+search_query = st.text_input("Search for an event:", value="")
 
-    for idx, talk in enumerate(matching_talks):
-        title = talk["title"]
-        
-        if talk["speakers"]:
-            # st.write(f"**Speakers:** {', '.join(talk['speakers'])}")
-            speakers = ", ".join(talk["speakers"]) if talk["speakers"] else "N/A"
+# Filter the events based on the search query
+search_results = backend.search_events(search_query, filtered_events)
 
-        room = talk["room"]
-
-        # Skip talks with "Lunch" in the title that are not in room 5834
-        if "Lunch" in title and room != "Milliways":
-            continue
-
-        start_time = datetime.strptime(
-            talk["unmodified_start"], "%Y-%m-%dT%H:%M:%S%z"
-        ) + timedelta(hours=2)
-        end_time = datetime.strptime(
-            talk["unmodified_end"], "%Y-%m-%dT%H:%M:%S%z"
-        ) + timedelta(hours=2)
-
-        # Build the speaker string with avatars if available
-        speaker_elements = []
-        for speaker_detail in talk["speakers_details"]:
-            name = speaker_detail["name"]
-            avatar = speaker_detail.get("avatar")
-            if avatar:
-                speaker_elements.append(f"<img src='{avatar}' alt='{name}' style='width: 30px; height: 30px; border-radius: 15px;' />")
-            else:
-                speaker_elements.append(name)
-        
-        speaker_str = ""
-        for i, element in enumerate(speaker_elements):
-            if i > 0 and isinstance(element, str) and isinstance(speaker_elements[i - 1], str):
-                speaker_str += ", "
-            speaker_str += element
-            if i < len(speaker_elements) - 1 and not (isinstance(element, str) and isinstance(speaker_elements[i + 1], str)):
-                speaker_str += ", "
-        
-        title_html = f"<div style='display: flex; justify-content: space-between; align-items: center;'><h2 style='font-weight: bold; font-size: 150%;'>{title}</h2><span style='font-size: 75%;'>{speaker_str}</span></div>"
-
-
-        if current_time >= start_time and current_time <= end_time:
-            if not in_progress_displayed:
-                st.markdown("<h1 style='font-size: 200%; color: limegreen;'>in Progress</h1>", unsafe_allow_html=True)
-                in_progress_displayed = True
-            st.markdown(title_html, unsafe_allow_html=True)
-        else:
-            if not upcoming_displayed:
-                st.markdown("<h1 style='font-size: 200%; color: limegreen;'>Upcoming</h1>", unsafe_allow_html=True)
-                upcoming_displayed = True
-            st.markdown(title_html, unsafe_allow_html=True)
-
-
-
-        st.markdown(f"<div style='display: flex; justify-content: space-between;'><span style='color: white;'>{talk['start']},  {talk['duration']}</span></div>", unsafe_allow_html=True)
-
-
-        abstract = talk.get("abstract")
-        if abstract:
-            words = abstract.split()
-            split_num = 40
-            abstract_preview = " ".join(words[:split_num])
-            abstract_rest = " ".join(words[split_num:])
-            if len(words) > split_num:
-                with st.expander(f"{abstract_preview}..."):
-                    st.write(f"{abstract_rest}")
-            else:
-                with st.expander(label="", expanded=True):
-                    st.write(f"{abstract}")
-
-        track = talk.get("track")
-        room = talk["room"]
-
-        # Only display the room if it's not the same as the track
-        if room != track:
-            talk['room'] = ''
-
-        if track:
-            st.markdown(f"<div style='display: flex; justify-content: space-between;'><div <span style='color: white;'>{talk['track']}</span></div><div>{talk['room']}</div></div>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<div style='display: flex; justify-content: space-between;'><div <span style='color: white;'>{talk['room']}</span></div></div>", unsafe_allow_html=True)
-
-        st.write("---")
-
-
-if __name__ == "__main__":
-    main()
+# Display the filtered events
+st.subheader("Search Results:")
+for event in search_results:
+    st.write(event['title'])
+    st.write("Date:", event['date'])
+    st.write("Start Time:", event['start'])
+    st.write("Duration:", event['duration'])
+    st.write("Room:", event['room'])
+    st.write("URL:", event['url'])
