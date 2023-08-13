@@ -356,11 +356,11 @@ Let me know if there's anything else you'd like to know or do!
 
 ### User
 
-ok, adapt the frontend to search across all fields. 
-add title to page "CCC camp"
-add subheader with current time
-add subheader for in-progress events
-add subheader with upcomming event
+ok, adapt the frontend to search across all fields.  
+add title to page "CCC camp"  
+add subheader with current time  
+add subheader for in-progress events  
+add subheader with upcomming event  
 
 ---
 
