@@ -3,6 +3,16 @@ from datetime import datetime, timedelta
 import backend
 
 
+st.set_page_config(
+    page_title="ccc camp 2023 schedule",
+    page_icon="🧊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'About': "source at https://github.com/5shekel/cccamp_events"
+    }
+)
+
 # Custom CSS to apply the color palette
 st.markdown("""
     <style>
