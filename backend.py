@@ -1,7 +1,9 @@
 
 import json
 import requests
+import streamlit as st
 
+@st.cache_data 
 def load_events(url='https://pretalx.c3voc.de/camp2023/schedule/export/schedule.json'):
     response = requests.get(url)
     content = json.loads(response.text)
